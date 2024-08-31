@@ -20,42 +20,31 @@ jobs:
 
     - name: Install dependencies
       run: |
+        sudo apt-get update
+        sudo apt-get install -y wget ffmpeg pulseaudio
         python -m pip install --upgrade pip
-        pip install discord.py selenium webdriver-manager
-        pip install pynacl
-        sudo apt update
-        sudo apt install ffmpeg
-        sudo apt update
-        sudo apt install pulseaudio
-        pip install Flask discord.py discord.py[voice]
-        pip install aiohttp
+        pip install discord.py selenium webdriver-manager pynacl Flask aiohttp discord.py[voice]
 
     - name: Install Chrome and ChromeDriver
       run: |
-        sudo apt-get update
-        sudo apt-get install -y wget
-        # Install Google Chrome
+        # Installer Google Chrome
         wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-        sudo dpkg -i google-chrome-stable_current_amd64.deb
-        sudo apt-get -f install
-        # Install ChromeDriver
-        CHROMEDRIVER_VERSION=$(curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE)
+        sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get -f install -y
+        # Installer ChromeDriver compatible avec la version de Chrome
+        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+\.\d+')
+        CHROMEDRIVER_VERSION=$(curl -sS "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
         wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
         unzip chromedriver_linux64.zip
-        sudo mv chromedriver /usr/local/bin/chromedriver
+        sudo mv chromedriver /usr/local/bin/
         sudo chmod +x /usr/local/bin/chromedriver
 
-    - name: up driver x chrome
+    - name: Verify ChromeDriver version
       run: |
-         sudo rm /usr/local/bin/chromedriver
-         wget https://chromedriver.storage.googleapis.com/128.0.6613.86/chromedriver_linux64.zip
-         unzip chromedriver_linux64.zip
-         sudo mv chromedriver /usr/local/bin/
-         sudo chmod +x /usr/local/bin/chromedriver
-         chromedriver --version
+        chromedriver --version
+        google-chrome --version
 
     - name: Run Discord Bot (with 30 minute timeout)
       env:
         DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
       run: |
-        python bot.py   # Limite à 30 minutes
+        timeout 30m python bot.py
