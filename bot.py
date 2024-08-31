@@ -10,7 +10,7 @@ intents.message_content = True
 bot = commands.Bot(command_prefix='!', intents=intents)
 
 # Variables globales
-uvb_stream_url = 'http://streams.printf.cc:8000/buzzer.ogg'  # URL du stream UVB-76
+uvb_stream_url = 'http://websdr.ewi.utwente.nl:8901/?tune=5514am'  # URL du stream UVB-76
 
 # Fonction pour jouer le stream UVB-76
 async def play_uvb_stream(vc):
@@ -28,7 +28,7 @@ async def on_ready():
     # Parcourir tous les serveurs auxquels le bot est connecté
     for guild in bot.guilds:
         # Vérifier si un salon vocal "General" existe
-        voice_channel = discord.utils.get(guild.voice_channels, name="UVB-76")
+        voice_channel = discord.utils.get(guild.voice_channels, name="5514 kHz")
         
         if voice_channel:
             # Connecter le bot au salon vocal
@@ -38,7 +38,7 @@ async def on_ready():
             await play_uvb_stream(vc)
         else:
             # Créer le canal "General" s'il n'existe pas
-            voice_channel = await guild.create_voice_channel("UVB-76")
+            voice_channel = await guild.create_voice_channel("5514 kHz")
             vc = await voice_channel.connect()
 
             # Diffuser UVB-76
@@ -48,11 +48,11 @@ async def on_ready():
     while True:
         await asyncio.sleep(10)
         for guild in bot.guilds:
-            voice_channel = discord.utils.get(guild.voice_channels, name="UVB-76")
+            voice_channel = discord.utils.get(guild.voice_channels, name="5514 kHz")
 
             if not voice_channel:
                 # Si un canal vocal "General" n'existe pas, le créer
-                voice_channel = await guild.create_voice_channel("UVB-76")
+                voice_channel = await guild.create_voice_channel("5514 kHz")
                 vc = await voice_channel.connect()
                 await play_uvb_stream(vc)
             else:
