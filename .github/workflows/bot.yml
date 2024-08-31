@@ -30,9 +30,10 @@ jobs:
         # Installer Google Chrome
         wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
         sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get -f install -y
-        # Installer ChromeDriver compatible avec la version de Chrome
-        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+\.\d+')
-        CHROMEDRIVER_VERSION=$(curl -sS "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION")
+        # Extraire la version de Google Chrome installée
+        CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
+        # Utiliser cette version pour récupérer la version exacte de ChromeDriver
+        CHROMEDRIVER_VERSION=$(curl -sS https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)
         wget https://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip
         unzip chromedriver_linux64.zip
         sudo mv chromedriver /usr/local/bin/
@@ -43,8 +44,8 @@ jobs:
         chromedriver --version
         google-chrome --version
 
-    - name: Run Discord Bot (with 30 minute timeout)
+    - name: Run Discord Bot
       env:
         DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
       run: |
-        timeout 30m python bot.py
+        python bot.py
