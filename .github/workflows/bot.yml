@@ -29,7 +29,7 @@ jobs:
       run: |
         # Installer Google Chrome
         wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-        sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get -f install -y
+        sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get -f install -y  # Résoudre automatiquement les dépendances
 
         # Obtenir la version exacte de Chrome installée
         CHROME_VERSION=$(google-chrome --version | grep -oP '\d+\.\d+\.\d+')
